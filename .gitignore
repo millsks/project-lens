@@ -214,3 +214,6 @@ src/lens/_version.py
 
 # Secrets file used by ACT workflows
 .secrets
+
+# Bandit security report
+bandit-report.json
