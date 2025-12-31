@@ -73,10 +73,12 @@ Documentation and code are still being organized. At a high level, the project w
 Planned steps (subject to change):
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/millsks/project-lens.git
    cd project-lens
    ```
+
 2. Set up a virtual environment / dependencies.
 3. Configure a simple metadata source (e.g., local JSON lineage sample).
 4. Start the LENS service in local/dev mode.
