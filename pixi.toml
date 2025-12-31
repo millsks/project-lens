@@ -1,0 +1,72 @@
+[workspace]
+channels = ["conda-forge"]
+platforms = ["osx-arm64", "linux-64", "osx-64", "win-64"]
+
+# Note: pixi-build preview feature is available but has limitations
+# with Python build backends. For now, use hatch for building Python packages.
+# preview = ["pixi-build"]
+
+[tasks]
+lint = "ruff check ."
+format = "ruff format ."
+format-check = "ruff format --check ."
+typecheck = "pyright"
+test = "pytest"
+test-cov = "pytest --cov=lens --cov-report=term-missing"
+dev = "uvicorn lens.main:app --reload"
+
+# Docker Compose tasks
+docker-up = "docker compose up -d"
+docker-down = "docker compose down"
+docker-logs = "docker compose logs -f"
+docker-ps = "docker compose ps"
+docker-restart = "docker compose restart"
+docker-clean = "docker compose down -v"
+
+[dependencies]
+python = "3.12.*"
+fastapi = ">=0.115.0"
+pydantic = ">=2.0.0,<3.0.0"
+uvicorn = ">=0.32.0"
+uvicorn-standard = ">=0.32.0"
+sqlalchemy = ">=2.0.0"
+psycopg2 = ">=2.9.0"
+alembic = ">=1.13.0"
+celery = ">=5.4.0"
+flower = ">=2.0.0"
+redis-py = ">=5.0.0"
+
+[pypi-dependencies]
+lens = { path = ".", editable = true }
+
+[feature.dev.dependencies]
+ruff = ">=0.8.0"
+pyright = ">=1.1.0"
+pytest = ">=8.0.0"
+pytest-cov = ">=6.0.0"
+pytest-asyncio = ">=0.24.0"
+hatch = ">=1.12.0"
+hatchling = ">=1.25.0"
+hatch-vcs = ">=0.4.0"
+git-cliff = ">=2.11.0"
+
+# Note: spec-kit not available in conda-forge or PyPI
+# Add manually if needed using: pixi run pip install <package-name>
+
+[feature.dev.pypi-dependencies]
+lens = { path = ".", editable = true }
+
+[feature.dev.tasks]
+build-python = "hatch build"
+# Note: pixi build is a preview feature with current limitations
+# build-conda = "pixi build"
+
+# Changelog tasks
+changelog = "git-cliff --output CHANGELOG.md"
+changelog-unreleased = "git-cliff --unreleased --tag unreleased --output -"
+changelog-latest = "git-cliff --latest --output -"
+release-preview = "git-cliff --bump --unreleased --output -"
+
+[environments]
+default = ["dev"]
+dev = ["dev"]
