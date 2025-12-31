@@ -6,23 +6,6 @@ platforms = ["osx-arm64", "linux-64", "osx-64", "win-64"]
 # with Python build backends. For now, use hatch for building Python packages.
 # preview = ["pixi-build"]
 
-[tasks]
-lint = "ruff check ."
-format = "ruff format ."
-format-check = "ruff format --check ."
-typecheck = "pyright"
-test = "pytest"
-test-cov = "pytest --cov=lens --cov-report=term-missing"
-dev = "uvicorn lens.main:app --reload"
-
-# Docker Compose tasks
-docker-up = "docker compose up -d"
-docker-down = "docker compose down"
-docker-logs = "docker compose logs -f"
-docker-ps = "docker compose ps"
-docker-restart = "docker compose restart"
-docker-clean = "docker compose down -v"
-
 [dependencies]
 python = "3.12.*"
 fastapi = ">=0.115.0"
@@ -39,15 +22,12 @@ redis-py = ">=5.0.0"
 [pypi-dependencies]
 lens = { path = ".", editable = true }
 
+# Development feature
 [feature.dev.dependencies]
-ruff = ">=0.8.0"
-pyright = ">=1.1.0"
-pytest = ">=8.0.0"
-pytest-cov = ">=6.0.0"
-pytest-asyncio = ">=0.24.0"
-hatch = ">=1.12.0"
-hatchling = ">=1.25.0"
-hatch-vcs = ">=0.4.0"
+pytest = "*"
+pytest-cov = "*"
+ruff = "*"
+mypy = "*"
 pre-commit = "*"
 twine = "*"
 safety = "*"
@@ -56,16 +36,56 @@ git-cliff = "*"
 git = "*"
 act = "*"
 
-# Note: spec-kit not available in conda-forge or PyPI
-# Add manually if needed using: pixi run pip install <package-name>
-
 [feature.dev.pypi-dependencies]
-lens = { path = ".", editable = true }
+build = "*"
+hatchling = "*"
+hatch-vcs = "*"
+pyright = ">=1.1.0"
+pytest-asyncio = ">=0.24.0"
+
+# Test feature
+[feature.test.dependencies]
+pytest = "*"
+pytest-cov = "*"
+
+# Lint feature
+[feature.lint.dependencies]
+ruff = "*"
+mypy = "*"
+bandit = "*"
+safety = ">=2.3.5,<3.0"
+marshmallow = ">=3.0,<4.0"
+typing_extensions = "*"
+
+[feature.lint.pypi-dependencies]
+pyright = ">=1.1.0"
+
+# Testing tasks
+[feature.test.tasks]
+test = "pytest"
+test-cov = "pytest --cov=lens --cov-report=term-missing --cov-report=html --cov-report=xml tests/"
+test-verbose = "pytest -v"
+
+# Linting tasks
+[feature.lint.tasks]
+lint = "ruff check src/ tests/"
+lint-fix = "ruff check --fix src/ tests/"
+format = "ruff check --fix --exit-non-zero-on-fix src/ tests/ && ruff format src/ tests/"
+format-check = "ruff format --check src/ tests/"
+typecheck = "pyright"
+security-check = "bandit -r src/ -c pyproject.toml && safety check --json"
+check = { depends-on = ["lint", "typecheck"] }
+check-all = { depends-on = ["lint", "typecheck", "security-check"] }
 
 [feature.dev.tasks]
-build-python = "hatch build"
-# Note: pixi build is a preview feature with current limitations
-# build-conda = "pixi build"
+# Run the application with reload enabled for development purposes only.
+dev = "uvicorn lens.main:app --reload"
+
+# Build tasks
+clean = "python -c 'import shutil, pathlib; [shutil.rmtree(p, ignore_errors=True) for p in [pathlib.Path(\"build\"), pathlib.Path(\"dist\")] + list(pathlib.Path(\".\").glob(\"*.egg-info\")) + list(pathlib.Path(\".\").glob(\"**/__pycache__\")) + [pathlib.Path(\".pytest_cache\"), pathlib.Path(\".coverage\"), pathlib.Path(\"htmlcov\"), pathlib.Path(\"coverage.xml\")]]'"
+build = { cmd = "python -m build", depends-on = ["clean"] }
+publish = { cmd = "twine upload dist/*", depends-on = ["build"] }
+publish-test = { cmd = "twine upload --repository testpypi dist/*", depends-on = ["build"] }
 
 # Changelog tasks
 changelog = "git-cliff --output CHANGELOG.md"
@@ -91,6 +111,23 @@ act-quality-monitoring = "act schedule -W .github/workflows/quality-monitoring.y
 act-sonarqube = "act push -W .github/workflows/sonarqube.yml"
 act-stale = "act schedule -W .github/workflows/stale.yml"
 
+# Combined tasks
+ci = { depends-on = ["check-all", "test-cov", "build"] }
+
+# Development setup
+dev-setup = { depends-on = ["pre-commit-install"] }
+
+# Docker Compose tasks
+docker-up = "docker compose up -d"
+docker-down = "docker compose down"
+docker-logs = "docker compose logs -f"
+docker-ps = "docker compose ps"
+docker-restart = "docker compose restart"
+docker-clean = "docker compose down -v"
+
+# Environment definitions
 [environments]
 default = ["dev"]
-dev = ["dev"]
+test = ["test"]
+lint = ["lint"]
+dev = ["dev", "test", "lint"]
