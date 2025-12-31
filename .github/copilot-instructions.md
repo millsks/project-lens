@@ -50,6 +50,7 @@ LENS is organized into three main layers:
 ## Code Style and Standards
 
 ### Python Style
+
 - Follow PEP 8 with 100 character line length
 - Use type hints consistently (pyright strict mode)
 - Prefer pathlib over os.path
@@ -57,6 +58,7 @@ LENS is organized into three main layers:
 - Format with ruff: `pixi run -e dev format`
 
 ### Testing
+
 - Write tests for all new features
 - Use pytest fixtures for common setup
 - Async tests use pytest-asyncio
@@ -64,7 +66,9 @@ LENS is organized into three main layers:
 - Run tests: `pixi run -e dev test`
 
 ### Commit Messages
+
 Use [Conventional Commits](https://www.conventionalcommits.org/):
+
 - `feat:` - New features
 - `fix:` - Bug fixes
 - `docs:` - Documentation only
@@ -82,12 +86,14 @@ Example: `feat(api): add lineage explanation endpoint`
 ## Common Tasks
 
 ### Running the Application
+
 ```bash
 # Start development server with auto-reload
 pixi run dev
 ```
 
 ### Code Quality
+
 ```bash
 # Format code
 pixi run -e dev format
@@ -100,6 +106,7 @@ pixi run -e dev typecheck
 ```
 
 ### Testing
+
 ```bash
 # Run all tests
 pixi run -e dev test
@@ -112,6 +119,7 @@ pixi run -e dev pytest tests/test_main.py
 ```
 
 ### Docker Services
+
 ```bash
 # Start PostgreSQL and Redis
 pixi run docker-up
@@ -127,6 +135,7 @@ pixi run docker-ps
 ```
 
 ### Building
+
 ```bash
 # Build Python package (wheel + sdist)
 pixi run -e dev build-python
@@ -170,6 +179,7 @@ docker-compose.yml - Local PostgreSQL and Redis services
 ## Current Development Phase
 
 **Completed**:
+
 - ✅ Project structure and build configuration
 - ✅ Development environment setup
 - ✅ Docker services (PostgreSQL, Redis)
@@ -179,6 +189,7 @@ docker-compose.yml - Local PostgreSQL and Redis services
 - ✅ Conventional commits and changelog automation
 
 **Next Steps**:
+
 1. Define core data models for lineage graphs
 2. Implement database schema with Alembic migrations
 3. Create metadata adapter interfaces
