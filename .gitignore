@@ -211,3 +211,6 @@ __marimo__/
 
 # Version file generated during release process
 src/lens/_version.py
+
+# Secrets file used by ACT workflows
+.secrets
