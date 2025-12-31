@@ -84,6 +84,7 @@ pixi run -e dev test
 ```
 
 **Important Notes**:
+
 - Most development commands (lint, format, typecheck, test, build) require the `dev` environment
 - Use `pixi run -e dev <command>` or activate the dev shell with `pixi shell -e dev`
 - The main application can be run in the default environment with `pixi run dev`
@@ -118,6 +119,7 @@ pixi run docker-clean
 ### Service Details
 
 **PostgreSQL**:
+
 - Image: `postgres:16-alpine`
 - Default Port: `5432`
 - Default Credentials: `lens` / `lens_dev_password`
@@ -125,12 +127,14 @@ pixi run docker-clean
 - Data persisted in Docker volume `postgres_data`
 
 **Redis**:
+
 - Image: `redis:7-alpine`
 - Default Port: `6379`
 - Default Password: `lens_dev_password`
 - Data persisted in Docker volume `redis_data`
 
 **Environment Configuration**:
+
 - Copy `.env.example` to `.env` and customize as needed
 - All connection strings and credentials are configurable via `.env`
 
@@ -194,12 +198,14 @@ pixi run -e dev release-preview
 ```
 
 **Commit Message Convention**: This project uses [Conventional Commits](https://www.conventionalcommits.org/) with the following types:
+
 - `feat:` - New features (⭐ Features)
 - `fix:` - Bug fixes (🐛 Bug Fixes)
 - `docs:` - Documentation changes (📚 Documentation)
 - `perf:` - Performance improvements (⚡ Performance)
 - `refactor:` - Code refactoring (🚜 Refactor)
 - `style:` - Code style/formatting (🎨 Styling)
+
 ## Project Structure
 
 ```text
@@ -271,6 +277,7 @@ project-lens/
    pixi run -e dev typecheck   # Type checking
    pixi run -e dev test        # Run tests
    ```
+
 4. **Commit with conventional commits**: `git commit -m "feat: add new feature"`
 5. **Preview changelog**: `pixi run -e dev changelog-unreleased`
 6. **Push and create PR**: Follow GitHub PR workflow
@@ -278,6 +285,7 @@ project-lens/
 ## Contributing
 
 When contributing, please:
+
 - Use conventional commit messages (see Changelog Management section)
 - Ensure all tests pass: `pixi run -e dev test`
 - Run formatters and linters: `pixi run -e dev format && pixi run -e dev lint`
@@ -289,7 +297,9 @@ When contributing, please:
 Apache License, Version 2.0 - See LICENSE file for details-1
 
 # Show current migration status
+
 pixi run alembic current
+
 ```
 
 ### Celery Tasks
