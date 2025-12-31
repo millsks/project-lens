@@ -48,7 +48,13 @@ pytest-asyncio = ">=0.24.0"
 hatch = ">=1.12.0"
 hatchling = ">=1.25.0"
 hatch-vcs = ">=0.4.0"
-git-cliff = ">=2.11.0"
+pre-commit = "*"
+twine = "*"
+safety = "*"
+bandit = "*"
+git-cliff = "*"
+git = "*"
+act = "*"
 
 # Note: spec-kit not available in conda-forge or PyPI
 # Add manually if needed using: pixi run pip install <package-name>
@@ -66,6 +72,24 @@ changelog = "git-cliff --output CHANGELOG.md"
 changelog-unreleased = "git-cliff --unreleased --tag unreleased --output -"
 changelog-latest = "git-cliff --latest --output -"
 release-preview = "git-cliff --bump --unreleased --output -"
+
+# Pre-commit tasks
+pre-commit-install = "pre-commit install && pre-commit install --hook-type commit-msg"
+pre-commit-run = "pre-commit run --all-files"
+
+# GitHub Actions local testing with act
+act-setup = "echo 'Updating .actrc and .secrets files for act configuration...' && touch .actrc .secrets && grep -qxF -- '--container-architecture linux/amd64' .actrc || echo '--container-architecture linux/amd64' >> .actrc && grep -qxF -- '--secret-file .secrets' .actrc || echo '--secret-file .secrets' >> .actrc && grep -qxF -- '-P ubuntu-latest=catthehacker/ubuntu:act-latest' .actrc || echo '-P ubuntu-latest=catthehacker/ubuntu:act-latest' >> .actrc && grep -qxF 'GITHUB_TOKEN=dummy' .secrets || echo 'GITHUB_TOKEN=dummy' >> .secrets && grep -qxF 'RELEASE_PAT=dummy' .secrets || echo 'RELEASE_PAT=dummy' >> .secrets && grep -qxF 'TEST_PYPI_API_TOKEN=dummy' .secrets || echo 'TEST_PYPI_API_TOKEN=dummy' >> .secrets && grep -qxF 'PYPI_API_TOKEN=dummy' .secrets || echo 'PYPI_API_TOKEN=dummy' >> .secrets && echo '✅ Act setup complete! Edit .secrets with real tokens if needed.'"
+act = "act"
+act-list = "act -l"
+act-dryrun = "act --dryrun"
+act-ci = "act push -W .github/workflows/ci.yml"
+act-pr = "act pull_request -W .github/workflows/ci.yml"
+act-release = "act workflow_dispatch -W .github/workflows/release.yml --input version=0.99.0-test --input prerelease=true"
+act-publish = "act release -W .github/workflows/publish.yml"
+act-maintenance = "act schedule -W .github/workflows/maintenance.yml"
+act-quality-monitoring = "act schedule -W .github/workflows/quality-monitoring.yml"
+act-sonarqube = "act push -W .github/workflows/sonarqube.yml"
+act-stale = "act schedule -W .github/workflows/stale.yml"
 
 [environments]
 default = ["dev"]
