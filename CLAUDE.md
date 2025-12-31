@@ -29,18 +29,20 @@ LENS is designed around three main layers:
 ## Technology Stack
 
 - **Python**: 3.12
-- **Package Manager**: pixi (conda-based)
-- **Build System**: hatch with hatch-vcs for dynamic versioning
-- **Web Framework**: FastAPI
+- **Package Manager**: pixi (conda-based environment and task management)
+- **Build System**: hatch with hatch-vcs for dynamic versioning from git tags
+- **Web Framework**: FastAPI with uvicorn server
 - **Data Validation**: Pydantic v2
-- **Database**: PostgreSQL with SQLAlchemy 2.0 ORM and Alembic for migrations
+- **Database**: PostgreSQL 16 with SQLAlchemy 2.0 ORM and Alembic for migrations
 - **Task Queue**: Celery with Flower for monitoring
-- **Message Broker**: Redis (for Celery)
+- **Message Broker & Cache**: Redis 7 (for Celery broker and caching)
 - **Development Tools**:
-  - Linting & Formatting: ruff
-  - Type Checking: pyright
-  - Testing: pytest with pytest-cov, pytest-asyncio
-- **LLM Integration**: Uses LLMs to generate narratives from graph-shaped metadata
+  - Linting & Formatting: ruff (>=0.8.0)
+  - Type Checking: pyright (>=1.1.0) with strict mode
+  - Testing: pytest (>=8.0.0) with pytest-cov, pytest-asyncio
+  - Changelog: git-cliff (>=2.11.0) for conventional commit changelog generation
+- **Containerization**: Docker Compose for local development services
+- **LLM Integration**: TBD - will use LLMs to generate narratives from graph-shaped metadata
 
 ## Key Design Principles
 
@@ -53,26 +55,39 @@ LENS is designed around three main layers:
 
 ### Prerequisites
 
-- [pixi](https://pixi.sh) package manager installed
+- [pixi](https://pixi.sh) package manager installed (v0.20.0 or later recommended)
 - [Docker](https://www.docker.com/) and Docker Compose (for local PostgreSQL and Redis)
+- Git (for version control and hatch-vcs version generation)
 
 ### Initial Setup
 
 ```bash
+# Clone the repository
+git clone https://github.com/millsks/project-lens.git
+cd project-lens
+
 # Install all dependencies (creates .pixi environment)
 pixi install
 
-# Install dev environment with development tools
-pixi install -e dev
-
 # Copy environment variables template and configure as needed
 cp .env.example .env
+# Edit .env if you need custom database credentials or ports
 
 # Start PostgreSQL and Redis using Docker Compose
 pixi run docker-up
+
+# Verify services are running
+pixi run docker-ps
+
+# Run initial tests to verify setup
+pixi run -e dev test
 ```
 
-**Note**: Most development commands require the `dev` environment. Use `pixi run -e dev <command>` or activate the dev shell with `pixi shell -e dev`.
+**Important Notes**:
+- Most development commands (lint, format, typecheck, test, build) require the `dev` environment
+- Use `pixi run -e dev <command>` or activate the dev shell with `pixi shell -e dev`
+- The main application can be run in the default environment with `pixi run dev`
+- Version number is dynamically generated from git tags using hatch-vcs
 
 ## Docker Services
 
@@ -147,24 +162,14 @@ pixi run -e dev typecheck
 ### Testing
 
 ```bash
-# Run all tests
-pixi run -e dev test
-
-# Run tests with coverage report
-pixi run -e dev test-cov
-
-# Run specific test file
-pixi run -e dev pytest tests/test_main.py
-
-# Run tests matching pattern
-pixi run -e dev pytest -k "test_health"
-```
-
 ### Building
 
 ```bash
 # Build Python wheel and sdist (using hatch) - Recommended
 pixi run -e dev build-python
+
+# Output will be in dist/ directory
+# Note: Version is automatically determined from git tags via hatch-vcs
 
 # Note: pixi build for conda packages is a preview feature and currently
 # has limitations with Python build backends. Use the Python wheel/sdist
@@ -172,17 +177,116 @@ pixi run -e dev build-python
 # to convert the PyPI package if needed.
 ```
 
-### Database Migrations (Alembic)
+### Changelog Management
 
 ```bash
-# Create a new migration
-pixi run alembic revision --autogenerate -m "description"
+# Generate full changelog and write to CHANGELOG.md
+pixi run -e dev changelog
 
-# Apply migrations
-pixi run alembic upgrade head
+# Preview unreleased changes
+pixi run -e dev changelog-unreleased
 
-# Rollback one migration
-pixi run alembic downgrade -1
+# View latest release notes
+pixi run -e dev changelog-latest
+
+# Preview next release (with version bump)
+pixi run -e dev release-preview
+```
+
+**Commit Message Convention**: This project uses [Conventional Commits](https://www.conventionalcommits.org/) with the following types:
+- `feat:` - New features (⭐ Features)
+- `fix:` - Bug fixes (🐛 Bug Fixes)
+- `docs:` - Documentation changes (📚 Documentation)
+- `perf:` - Performance improvements (⚡ Performance)
+- `refactor:` - Code refactoring (🚜 Refactor)
+- `style:` - Code style/formatting (🎨 Styling)
+## Project Structure
+
+```text
+project-lens/
+├── src/lens/              # Main application package
+│   ├── __init__.py        # Package initialization with version handling
+│   ├── _version.py        # Auto-generated by hatch-vcs (git-ignored)
+│   └── main.py            # FastAPI application entry point
+├── tests/                 # Test suite
+│   ├── __init__.py
+│   └── test_main.py       # FastAPI endpoint tests
+├── pixi.toml              # Pixi package manager configuration
+├── pixi.lock              # Lock file for reproducible environments
+├── pyproject.toml         # Python project metadata and tool configs
+│                          # Includes: hatch, ruff, pyright, pytest, coverage, git-cliff
+├── docker-compose.yml     # Docker services (PostgreSQL, Redis)
+├── .env.example           # Environment variables template
+## Configuration Files
+
+- **pixi.toml**: Pixi environment, dependency management, and task definitions
+  - Defines both default and `dev` environments
+  - Includes tasks for development, testing, Docker management, and changelog generation
+  - Multi-platform support: osx-arm64, linux-64, osx-64, win-64
+- **pyproject.toml**: Python project metadata and tool configurations
+  - Build system: hatch with hatch-vcs for git-based versioning
+  - Tool configs: ruff (lint/format), pyright (typecheck), pytest, coverage, git-cliff
+  - Project metadata: dependencies, URLs, classifiers
+- **pixi.lock**: Auto-generated lock file for reproducible builds (commit to version control)
+  - Marked as binary in .gitattributes to prevent merge conflicts
+- **docker-compose.yml**: Local development services (PostgreSQL 16, Redis 7)
+  - Includes health checks and persistent volumes
+  - Configurable via environment variables
+- **.env.example**: Template for environment variables (commit to version control)
+- **.env**: Local environment configuration (git-ignored, copy from .env.example)
+- **.gitattributes**: Git attributes configuration (pixi.lock handling)
+- **.python-version**: Python version specification for tools like pyenv
+
+### Database Migrations (Alembic)
+
+## Current Development Status
+
+**Phase**: Project initialization and infrastructure setup
+
+**Completed**:
+- ✅ Project structure and build configuration
+- ✅ Development environment with pixi
+- ✅ Docker Compose services (PostgreSQL, Redis)
+- ✅ Basic FastAPI application with health endpoints
+- ✅ Testing framework setup
+- ✅ Code quality tools (ruff, pyright)
+- ✅ Conventional commits and changelog automation (git-cliff)
+
+**Next Steps**:
+1. Define core data models for lineage graphs and metadata
+2. Implement database schema and migrations with Alembic
+3. Create metadata adapter interfaces
+4. Develop API endpoints for lineage queries
+5. Add LLM integration for narrative generation
+6. Implement example adapters for common tools
+
+## Development Workflow
+
+1. **Create a feature branch**: `git checkout -b feat/your-feature`
+2. **Make changes**: Edit code, following the existing patterns
+3. **Run quality checks**:
+   ```bash
+   pixi run -e dev format      # Format code
+   pixi run -e dev lint        # Check linting
+   pixi run -e dev typecheck   # Type checking
+   pixi run -e dev test        # Run tests
+   ```
+4. **Commit with conventional commits**: `git commit -m "feat: add new feature"`
+5. **Preview changelog**: `pixi run -e dev changelog-unreleased`
+6. **Push and create PR**: Follow GitHub PR workflow
+
+## Contributing
+
+When contributing, please:
+- Use conventional commit messages (see Changelog Management section)
+- Ensure all tests pass: `pixi run -e dev test`
+- Run formatters and linters: `pixi run -e dev format && pixi run -e dev lint`
+- Add tests for new features
+- Update documentation as needed
+
+## License
+
+Apache License, Version 2.0 - See LICENSE file for details-1
 
 # Show current migration status
 pixi run alembic current
