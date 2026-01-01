@@ -10,6 +10,22 @@ It sits on top of your existing **data catalog** and **lineage platform** and pr
 
 > LENS is currently in early development and not yet production-ready.
 
+## Repository Structure
+
+This is a **mono-repo** containing multiple Python packages:
+
+- **`packages/lens-core/`** - Core functionality (models, business logic, database, connectors)
+  - Install: `pip install lens-core`
+  - Import: `from lens_core import ...`
+
+- **`packages/lens-api/`** - FastAPI application (HTTP API endpoints)
+  - Install: `pip install lens-api` (automatically installs lens-core)
+  - Import: `from lens_api import ...`
+
+- **`ui/`** (planned) - Next.js React application
+
+Each package has independent versioning using git tags (e.g., `core-v1.0.0`, `api-v1.0.0`).
+
 ### Features (Planned)
 
 - **Lineage Explainer**
