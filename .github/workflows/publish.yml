@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/p/pychronotab
+      url: https://pypi.org/p/lens-api
     permissions:
       contents: read
       id-token: write # For trusted publishing
@@ -78,7 +78,7 @@ jobs:
       #     attempt=1
       #     while [ "$attempt" -le "$max_attempts" ]; do
       #       echo "🔄 Installation attempt $attempt/$max_attempts"
-      #       if pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ "pychronotab==${VERSION}"; then
+      #       if pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ "lens-api==${VERSION}"; then
       #         echo "✅ Successfully installed from Test PyPI"
       #         break
       #       elif [ "$attempt" -eq "$max_attempts" ]; then
@@ -93,7 +93,7 @@ jobs:
 
       # - name: Verify installation
       #   run: |
-      #     python -c "import pychronotab; print(f'✅ Import successful, version: {pychronotab.__version__}')"
+      #     python -c "import lens_api; print(f'✅ Import successful, version: {lens_api.__version__}')"
       #     echo "✅ Test PyPI installation verified"
 
       - name: Publish to PyPI
@@ -109,5 +109,5 @@ jobs:
           VERSION="${{ github.event.release.tag_name }}"
           VERSION=${VERSION#v}
           echo "🎉 Package published to PyPI successfully!"
-          echo "📦 Package: https://pypi.org/project/pychronotab/${VERSION}/"
-          echo "📚 Installation: pip install pychronotab==${VERSION}"
+          echo "📦 Package: https://pypi.org/project/lens-api/${VERSION}/"
+          echo "📚 Installation: pip install lens-api==${VERSION}"

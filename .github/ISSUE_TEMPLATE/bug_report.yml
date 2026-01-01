@@ -1,5 +1,5 @@
 name: 🐛 Bug Report
-description: Report a bug to help us improve pychronotab
+description: Report a bug to help us improve LENS
 title: "[Bug]: "
 labels: ["bug", "triage"]
 assignees: []
@@ -77,9 +77,9 @@ body:
   - type: input
     id: package-version
     attributes:
-      label: pychronotab version
-      description: What version of pychronotab are you using?
-      placeholder: e.g. 0.1.0
+      label: LENS version
+      description: What version of LENS are you using? (lens-core and/or lens-api)
+      placeholder: e.g. lens-api 0.1.0
     validations:
       required: true
 

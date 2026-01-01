@@ -4,20 +4,16 @@
 # Source code changes
 area/core:
   - changed-files:
-      - any-glob-to-any-file: src/pychronotab/**/*.py
+      - any-glob-to-any-file: packages/lens-core/**/*.py
 
-area/fields:
+area/api:
   - changed-files:
-      - any-glob-to-any-file: src/pychronotab/fields.py
-
-area/compat:
-  - changed-files:
-      - any-glob-to-any-file: src/pychronotab/compat_croniter.py
+      - any-glob-to-any-file: packages/lens-api/**/*.py
 
 # Test changes
 area/tests:
   - changed-files:
-      - any-glob-to-any-file: tests/**
+      - any-glob-to-any-file: packages/**/tests/**
 
 # Documentation changes
 area/docs:

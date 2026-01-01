@@ -196,16 +196,16 @@ jobs:
           ## Installation
 
           \`\`\`bash
-          pip install pychronotab==${{ inputs.version }}
+          pip install lens-api==${{ inputs.version }}
           \`\`\`
 
           ## Verification
 
           \`\`\`bash
-          python -c "import pychronotab; print(pychronotab.__version__)"
+          python -c "import lens_api; print(lens_api.__version__)"
           \`\`\`
 
-          📝 **Full changelog**: [CHANGELOG.md](https://github.com/millsks/pychronotab/blob/main/CHANGELOG.md)
+          📝 **Full changelog**: [CHANGELOG.md](https://github.com/millsks/project-lens/blob/main/CHANGELOG.md)
           RELEASE_NOTES
           EOF
             else
@@ -219,7 +219,7 @@ jobs:
 
           ⚠️ **No specific changelog entry found for this version.**
 
-          Please check the [full changelog](https://github.com/millsks/pychronotab/blob/main/CHANGELOG.md) for details.
+          Please check the [full changelog](https://github.com/millsks/project-lens/blob/main/CHANGELOG.md) for details.
 
           ### Package Information
           - Version: ${{ inputs.version }}
@@ -229,13 +229,13 @@ jobs:
           ## Installation
 
           \`\`\`bash
-          pip install pychronotab==${{ inputs.version }}
+          pip install lens-api==${{ inputs.version }}
           \`\`\`
 
           ## Verification
 
           \`\`\`bash
-          python -c "import pychronotab; print(pychronotab.__version__)"
+          python -c "import lens_api; print(lens_api.__version__)"
           \`\`\`
           RELEASE_NOTES
           EOF
@@ -255,7 +255,7 @@ jobs:
           ## Installation
 
           \`\`\`bash
-          pip install pychronotab==${{ inputs.version }}
+          pip install lens-api==${{ inputs.version }}
           \`\`\`
           RELEASE_NOTES
           EOF
