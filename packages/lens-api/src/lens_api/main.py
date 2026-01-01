@@ -2,7 +2,7 @@
 
 from fastapi import FastAPI
 
-from lens import __version__
+from lens_api import __version__
 
 app = FastAPI(
     title="LENS API",

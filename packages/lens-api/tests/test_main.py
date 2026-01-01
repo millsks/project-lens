@@ -2,7 +2,7 @@
 
 from fastapi.testclient import TestClient
 
-from lens.main import app
+from lens_api.main import app
 
 client = TestClient(app)
 
