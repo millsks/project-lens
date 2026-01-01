@@ -209,8 +209,9 @@ __marimo__/
 .pixi/*
 !.pixi/config.toml
 
-# Version file generated during release process
-src/lens/_version.py
+# Version files generated during release process
+packages/lens-core/src/lens_core/_version.py
+packages/lens-api/src/lens_api/_version.py
 
 # Secrets file used by ACT workflows
 .secrets
