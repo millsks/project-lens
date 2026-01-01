@@ -20,8 +20,7 @@ flower = ">=2.0.0"
 redis-py = ">=5.0.0"
 
 [pypi-dependencies]
-lens-core = { path = "packages/lens-core", editable = true }
-lens-api = { path = "packages/lens-api", editable = true }
+lens-io = { path = "backend/lens-io", editable = true }
 
 # Development feature
 [feature.dev.dependencies]
@@ -63,36 +62,30 @@ pyright = ">=1.1.0"
 
 # Testing tasks
 [feature.test.tasks]
-test = "pytest packages/"
-test-cov = "pytest --cov=lens_core --cov=lens_api --cov-report=term-missing --cov-report=html --cov-report=xml packages/"
-test-verbose = "pytest -v packages/"
+test = "pytest backend/"
+test-cov = "pytest --cov=lens --cov-report=term-missing --cov-report=html --cov-report=xml backend/"
+test-verbose = "pytest -v backend/"
 
 # Linting tasks
 [feature.lint.tasks]
-lint = "ruff check packages/"
-lint-fix = "ruff check --fix packages/"
-format = "ruff check --fix --exit-non-zero-on-fix packages/ && ruff format packages/"
-format-check = "ruff format --check packages/"
+lint = "ruff check backend/"
+lint-fix = "ruff check --fix backend/"
+format = "ruff check --fix --exit-non-zero-on-fix backend/ && ruff format backend/"
+format-check = "ruff format --check backend/"
 typecheck = "pyright"
-security-check = "bandit -r packages/ -c pyproject.toml && safety check --json"
+security-check = "bandit -r backend/ -c backend/lens-io/pyproject.toml && safety check --json"
 check = { depends-on = ["lint", "typecheck"] }
 check-all = { depends-on = ["lint", "typecheck", "security-check"] }
 
 [feature.dev.tasks]
 # Run the application with reload enabled for development purposes only.
-dev = "uvicorn lens_api.main:app --reload"
+dev = "uvicorn lens.api.main:app --reload"
 
 # Build tasks
-clean = "python -c 'import shutil, pathlib; [shutil.rmtree(p, ignore_errors=True) for p in [pathlib.Path(\"build\"), pathlib.Path(\"dist\")] + list(pathlib.Path(\".\").glob(\"*.egg-info\")) + list(pathlib.Path(\"packages\").glob(\"**/build\")) + list(pathlib.Path(\"packages\").glob(\"**/dist\")) + list(pathlib.Path(\"packages\").glob(\"**/*.egg-info\")) + list(pathlib.Path(\".\").glob(\"**/__pycache__\")) + [pathlib.Path(\".pytest_cache\"), pathlib.Path(\".coverage\"), pathlib.Path(\"htmlcov\"), pathlib.Path(\"coverage.xml\")]]'"
-build-core = "cd packages/lens-core && python -m build && cd ../.."
-build-api = "cd packages/lens-api && python -m build && cd ../.."
-build = { depends-on = ["clean", "build-core", "build-api"] }
-publish-core = "twine upload packages/lens-core/dist/*"
-publish-api = "twine upload packages/lens-api/dist/*"
-publish = { depends-on = ["publish-core", "publish-api"] }
-publish-test-core = "twine upload --repository testpypi packages/lens-core/dist/*"
-publish-test-api = "twine upload --repository testpypi packages/lens-api/dist/*"
-publish-test = { depends-on = ["publish-test-core", "publish-test-api"] }
+clean = "python -c 'import shutil, pathlib; [shutil.rmtree(p, ignore_errors=True) for p in [pathlib.Path(\"build\"), pathlib.Path(\"dist\")] + list(pathlib.Path(\".\").glob(\"*.egg-info\")) + list(pathlib.Path(\"backend\").glob(\"**/build\")) + list(pathlib.Path(\"backend\").glob(\"**/dist\")) + list(pathlib.Path(\"backend\").glob(\"**/*.egg-info\")) + list(pathlib.Path(\".\").glob(\"**/__pycache__\")) + [pathlib.Path(\".pytest_cache\"), pathlib.Path(\".coverage\"), pathlib.Path(\"htmlcov\"), pathlib.Path(\"coverage.xml\")]]'"
+build = "cd backend/lens-io && python -m build && cd ../.."
+publish = "twine upload backend/lens-io/dist/*"
+publish-test = "twine upload --repository testpypi backend/lens-io/dist/*"
 
 # Changelog tasks
 changelog = "git-cliff --output CHANGELOG.md"
