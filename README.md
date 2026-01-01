@@ -12,19 +12,17 @@ It sits on top of your existing **data catalog** and **lineage platform** and pr
 
 ## Repository Structure
 
-This is a **mono-repo** containing multiple Python packages:
+This is a **mono-repo** containing backend and frontend components:
 
-- **`packages/lens-core/`** - Core functionality (models, business logic, database, connectors)
-  - Install: `pip install lens-core`
-  - Import: `from lens_core import ...`
+- **`backend/lens-io/`** - Unified Python package
+  - Install: `pip install lens`
+  - Library usage: `from lens.lineage import LineageRepository`
+  - API service: `uvicorn lens.api.main:app`
+  - Contains core functionality (models, business logic, database) and API service
 
-- **`packages/lens-api/`** - FastAPI application (HTTP API endpoints)
-  - Install: `pip install lens-api` (automatically installs lens-core)
-  - Import: `from lens_api import ...`
+- **`frontend/`** (planned) - Next.js React application
 
-- **`ui/`** (planned) - Next.js React application
-
-Each package has independent versioning using git tags (e.g., `core-v1.0.0`, `api-v1.0.0`).
+The package uses dynamic versioning with git tags (e.g., `v1.0.0`).
 
 ### Features (Planned)
 
