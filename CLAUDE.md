@@ -10,22 +10,20 @@ LENS (Lineage & Enterprise eXplainer Service) is an open-source service that tra
 
 ## Repository Structure
 
-This is a **mono-repo** containing multiple Python packages:
+This is a **mono-repo** containing backend and frontend components:
 
-- **`packages/lens-core/`**: Core functionality (models, business logic, database schemas, connectors)
-  - PyPI: `lens-core`
-  - Import: `from lens_core import ...`
-  - Git tags: `core-v*` (e.g., `core-v1.0.0`)
+- **`backend/lens-io/`**: Unified Python package combining core functionality and API service
+  - PyPI: `lens`
+  - Import: `from lens import ...` (library) or `from lens.api import ...` (API)
+  - Git tags: `v*` (e.g., `v1.0.0`)
+  - Contains:
+    - `lens.lineage` - Lineage models, schemas, and repository
+    - `lens.db` - Database session management
+    - `lens.api` - FastAPI application layer
 
-- **`packages/lens-api/`**: FastAPI application layer (HTTP endpoints, API middleware)
-  - PyPI: `lens-api`
-  - Import: `from lens_api import ...`
-  - Git tags: `api-v*` (e.g., `api-v1.0.0`)
-  - Depends on: `lens-core`
+- **`frontend/`** (future): Next.js React application
 
-- **`ui/`** (future): Next.js React application
-
-Each package has independent versioning using git tags and hatch-vcs.
+The package uses dynamic versioning with git tags and hatch-vcs.
 
 ## Core Concepts
 
@@ -195,17 +193,12 @@ pixi run -e test test-cov
 ### Building
 
 ```bash
-# Build both packages (lens-core and lens-api)
+# Build the lens package
 pixi run -e dev build
 
-# Build individual packages
-pixi run -e dev build-core    # Build lens-core only
-pixi run -e dev build-api      # Build lens-api only
-
-# Output will be in packages/lens-core/dist/ and packages/lens-api/dist/
-# Note: Versions are determined from git tags via hatch-vcs
-#       lens-core uses tags matching: core-v* (e.g., core-v1.0.0)
-#       lens-api uses tags matching: api-v* (e.g., api-v1.0.0)
+# Output will be in backend/lens-io/dist/
+# Note: Version is determined from git tags via hatch-vcs
+#       Tags should match: v* (e.g., v1.0.0)
 ```
 
 ### Changelog Management
@@ -237,25 +230,24 @@ pixi run -e dev release-preview
 
 ```text
 project-lens/
-├── packages/              # Python packages (mono-repo)
-│   ├── lens-core/         # Core functionality package
+├── backend/
+│   ├── lens/              # Unified Python package
 │   │   ├── pyproject.toml # Package config with hatch-vcs (root = "../..")
-│   │   ├── src/lens_core/ # Core Python module
+│   │   ├── src/lens/      # Python module
 │   │   │   ├── __init__.py
-│   │   │   └── _version.py    # Auto-generated (git-ignored)
-│   │   ├── tests/         # Core package tests
-│   │   └── README.md      # Core package documentation
-│   ├── lens-api/          # API service package
-│   │   ├── pyproject.toml # Package config (depends on lens-core)
-│   │   ├── src/lens_api/  # API Python module
-│   │   │   ├── __init__.py
-│   │   │   ├── main.py    # FastAPI application
-│   │   │   └── _version.py    # Auto-generated (git-ignored)
-│   │   ├── tests/         # API package tests
+│   │   │   ├── _version.py    # Auto-generated (git-ignored)
+│   │   │   ├── lineage/   # Lineage models, schemas, repository
+│   │   │   ├── db/        # Database session management
+│   │   │   └── api/       # FastAPI application
+│   │   │       ├── __init__.py
+│   │   │       └── main.py
+│   │   ├── alembic/       # Database migrations
+│   │   ├── scripts/       # Utility scripts (e.g., seed data)
+│   │   ├── tests/         # Package tests
 │   │   │   └── test_main.py
-│   │   └── README.md      # API package documentation
-│   └── README.md          # Packages overview
-├── ui/                    # (Future) Next.js application
+│   │   └── README.md      # Package documentation
+│   └── README.md          # Backend overview
+├── frontend/              # (Future) Next.js application
 ├── pixi.toml              # Workspace-level config and tasks
 ├── pixi.lock              # Lock file for reproducible environments
 ├── docker-compose.yml     # Shared services (PostgreSQL, Redis)
